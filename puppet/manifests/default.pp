@@ -1,9 +1,12 @@
+import "./core/*"
+import "./phalconphp.pp"
+
 Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ] }
 
 
 class system-update {
     exec { 'apt-get update':
-        command => 'apt-get update',
+        command => 'apt-get update'
     }
 }
 
@@ -12,21 +15,46 @@ class dev-packages {
     include gcc
     include wget
 
-    $devPackages = [ "vim", "curl", "git", "nodejs", "npm", "capistrano", "rubygems", "openjdk-7-jdk", "libaugeas-ruby" ]
+
+    package { "python-software-properties":
+        ensure => present,
+    }
+    ->
+    exec { 'add-apt-repository ppa:chris-lea/node.js':
+        command => '/usr/bin/add-apt-repository ppa:chris-lea/node.js',
+        require => Package["python-software-properties"],
+    }
+    ->
+    exec { 'add-apt-repository ppa:ivanj/beanstalkd':
+        command => '/usr/bin/add-apt-repository ppa:ivanj/beanstalkd',
+        require => Package["python-software-properties"],
+    }
+    exec { 'add-apt-repository ppa:ondrej/mysql-5.6':
+        command => '/usr/bin/add-apt-repository ppa:ondrej/mysql-5.6',
+        require => Package["python-software-properties"],
+    }
+    ->
+    exec { 'apt-get update 2':
+        command => 'apt-get update'
+    }
+
+
+    $devPackages = [ "vim", "curl", "git", "nodejs", "capistrano", "rubygems", "openjdk-7-jdk", "libaugeas-ruby", "beanstalkd" ]
+
     package { $devPackages:
         ensure => "installed",
-        require => Exec['apt-get update'],
+        require => Exec['apt-get update 2'],
     }
 
     exec { 'install less using npm':
         command => 'npm install less -g',
-        require => Package["npm"],
+        require => Package["nodejs"],
     }
 
-    exec { 'install capifony using RubyGems':
-        command => 'gem install capifony',
-        require => Package["rubygems"],
-    }
+    #exec { 'install capifony using RubyGems':
+    #    command => 'gem install capifony',
+    #    require => Package["rubygems"],
+    #}
 
     exec { 'install sass with compass using RubyGems':
         command => 'gem install compass',
@@ -39,20 +67,67 @@ class dev-packages {
     }
 }
 
-class nginx-setup {
-    
-    include nginx
+class phalconphp-setup (
+  $ensure           = 'master',
+  $install_devtools = true,
+  $devtools_version = 'master',
+  $custom_ini       = true,
+  $ini_file         = "phalcon.ini",
+  $debug            = false) {
 
-    package { "python-software-properties":
-        ensure => present,
-    }
+  include core::params
+
+  $phalcon_deps = [
+    'autoconf',
+    'make',
+    'automake',
+    're2c',
+    'libpcre3', 'libpcre3-dev',
+    # 'pcre', 'pcre-devel',
+    'libssl1.0.0',
+    'libssl-dev',
+    'libcurl3',
+    'libcurl4-openssl-dev',
+    ]
+
+  package { $phalcon_deps:
+      ensure => "installed",
+      require => Exec['apt-get update'],
+  }
+  ->
+  class {'phalconphp::framework':
+    version => $ensure,
+    debug=>false,
+    src_phalcon_ini => $core::params::src_phalcon_ini,
+    require => Package["php5-fpm"],
+  }
+
+}
+
+class elasticsearch-setup {
+  include wget
+
+  wget::fetch { 'elasticsearch':
+    source => 'https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.1.0.deb',
+    destination => '/tmp/elasticsearch-1.1.0.deb'
+  }
+  ->
+  exec { 'install elasticsearch':
+      command => 'dpkg -i /tmp/elasticsearch-1.1.0.deb',
+      require => Package["openjdk-7-jdk"],
+  }
+}
+
+class nginx-setup {
+
+    include nginx
 
     file { '/etc/nginx/sites-available/default':
         owner  => root,
         group  => root,
         ensure => file,
         mode   => 644,
-        source => '/vagrant/src/nginx/default',
+        source => '/vagrant/sys-conf/nginx/default',
         require => Package["nginx"],
     }
 
@@ -64,16 +139,22 @@ class nginx-setup {
     }
 }
 
-class { "mysql":
-    root_password => 'root',
-}
+class mysql-setup {
+  include core::params
 
-mysql::grant { 'symfony':
-    mysql_privileges => 'ALL',
-    mysql_password => 'root',
-    mysql_db => 'symfony',
-    mysql_user => 'root',
-    mysql_host => 'localhost',
+  class { "mysql":
+    root_password => $core::params::dbroot_password,
+    require => Exec['apt-get update 2'],
+  }
+
+  mysql::grant { 'phalcon':
+      mysql_privileges => 'ALL',
+      mysql_password => $core::params::dbpassword,
+      mysql_user => $core::params::dbuser,
+      mysql_host => 'localhost',
+      mysql_db => $core::params::dbname,
+  }
+
 }
 
 class php-setup {
@@ -91,10 +172,10 @@ class php-setup {
         require => Exec['add-apt-repository ppa:ondrej/php5'],
     }
 
-    package { "mongodb":
-        ensure => present,
-        require => Package[$php],
-    }
+    #package { "mongodb":
+    #    ensure => present,
+    #    require => Package[$php],
+    #}
 
     package { $php:
         notify => Service['php5-fpm'],
@@ -122,21 +203,21 @@ class php-setup {
         require => Package[$php],
     }
 
-    exec { 'pecl install mongo':
-        notify => Service["php5-fpm"],
-        command => '/usr/bin/pecl install --force mongo',
-        logoutput => "on_failure",
-        require => Package[$php],
-        before => [File['/etc/php5/cli/php.ini'], File['/etc/php5/fpm/php.ini'], File['/etc/php5/fpm/php-fpm.conf'], File['/etc/php5/fpm/pool.d/www.conf']],
-        unless => "/usr/bin/php -m | grep mongo",
-    }
+    #exec { 'pecl install mongo':
+    #    notify => Service["php5-fpm"],
+    #    command => '/usr/bin/pecl install --force mongo',
+    #    logoutput => "on_failure",
+    #    require => Package[$php],
+    #    before => [File['/etc/php5/cli/php.ini'], File['/etc/php5/fpm/php.ini'], File['/etc/php5/fpm/php-fpm.conf'], File['/etc/php5/fpm/pool.d/www.conf']],
+    #    unless => "/usr/bin/php -m | grep mongo",
+    #}
 
     file { '/etc/php5/cli/php.ini':
         owner  => root,
         group  => root,
         ensure => file,
         mode   => 644,
-        source => '/vagrant/src/php/cli/php.ini',
+        source => '/vagrant/sys-conf/php/cli/php.ini',
         require => Package[$php],
     }
 
@@ -146,7 +227,7 @@ class php-setup {
         group  => root,
         ensure => file,
         mode   => 644,
-        source => '/vagrant/src/php/fpm/php.ini',
+        source => '/vagrant/sys-conf/php/fpm/php.ini',
         require => Package[$php],
     }
 
@@ -156,7 +237,7 @@ class php-setup {
         group  => root,
         ensure => file,
         mode   => 644,
-        source => '/vagrant/src/php/fpm/php-fpm.conf',
+        source => '/vagrant/sys-conf/php/fpm/php-fpm.conf',
         require => Package[$php],
     }
 
@@ -166,7 +247,7 @@ class php-setup {
         group  => root,
         ensure => file,
         mode   => 644,
-        source => '/vagrant/src/php/fpm/pool.d/www.conf',
+        source => '/vagrant/sys-conf/php/fpm/pool.d/www.conf',
         require => Package[$php],
     }
 
@@ -175,10 +256,10 @@ class php-setup {
         require => Package["php5-fpm"],
     }
 
-    service { "mongodb":
-        ensure => running,
-        require => Package["mongodb"],
-    }
+    #service { "mongodb":
+    #    ensure => running,
+    #    require => Package["mongodb"],
+    #}
 }
 
 class composer {
@@ -204,13 +285,21 @@ class { 'apt':
     always_apt_update    => true
 }
 
+
+
 Exec["apt-get update"] -> Package <| |>
 
 include system-update
 include dev-packages
+include mysql-setup
 include nginx-setup
 include php-setup
+
+class { "phalconphp-setup" :}
 include composer
 include phpqatools
 include memcached
 include redis
+
+include elasticsearch-setup
+

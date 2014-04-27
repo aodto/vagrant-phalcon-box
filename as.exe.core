@@ -1,0 +1,23 @@
+(C:\Symbian\7.0s\Series60_v20\epoc32\gcc\bin\as.exe 1000) Exception trapped!
+(C:\Symbian\7.0s\Series60_v20\epoc32\gcc\bin\as.exe 1000) exception C0000005 at 1002F9B3
+(C:\Symbian\7.0s\Series60_v20\epoc32\gcc\bin\as.exe 1000) exception: ax 0 bx 0 cx 781C0000 dx 0
+(C:\Symbian\7.0s\Series60_v20\epoc32\gcc\bin\as.exe 1000) exception: si 0 di 1007EDE1 bp 247FD3C sp 247FD34
+(C:\Symbian\7.0s\Series60_v20\epoc32\gcc\bin\as.exe 1000) exception is: STATUS_ACCESS_VIOLATION
+(C:\Symbian\7.0s\Series60_v20\epoc32\gcc\bin\as.exe 1000) Stack trace:
+(C:\Symbian\7.0s\Series60_v20\epoc32\gcc\bin\as.exe 1000) frame 0: sp = 0x247F8E0, pc = 0x1000947D
+(C:\Symbian\7.0s\Series60_v20\epoc32\gcc\bin\as.exe 1000) frame 1: sp = 0x247F910, pc = 0x776F6AB9
+(C:\Symbian\7.0s\Series60_v20\epoc32\gcc\bin\as.exe 1000) frame 2: sp = 0x247F934, pc = 0x776F6A8B
+(C:\Symbian\7.0s\Series60_v20\epoc32\gcc\bin\as.exe 1000) frame 3: sp = 0x247F9E4, pc = 0x776C0143
+(C:\Symbian\7.0s\Series60_v20\epoc32\gcc\bin\as.exe 1000) frame 4: sp = 0x247FD3C, pc = 0x1005AC6E
+(C:\Symbian\7.0s\Series60_v20\epoc32\gcc\bin\as.exe 1000) frame 5: sp = 0x247FD48, pc = 0x100596C4
+(C:\Symbian\7.0s\Series60_v20\epoc32\gcc\bin\as.exe 1000) frame 6: sp = 0x247FD58, pc = 0x1004E03A
+(C:\Symbian\7.0s\Series60_v20\epoc32\gcc\bin\as.exe 1000) frame 7: sp = 0x247FD6C, pc = 0x40B7B7
+(C:\Symbian\7.0s\Series60_v20\epoc32\gcc\bin\as.exe 1000) frame 8: sp = 0x247FD7C, pc = 0x40BD25
+(C:\Symbian\7.0s\Series60_v20\epoc32\gcc\bin\as.exe 1000) frame 9: sp = 0x247FD94, pc = 0x4117EE
+(C:\Symbian\7.0s\Series60_v20\epoc32\gcc\bin\as.exe 1000) frame 10: sp = 0x247FDE0, pc = 0x404FBA
+(C:\Symbian\7.0s\Series60_v20\epoc32\gcc\bin\as.exe 1000) frame 11: sp = 0x247FDFC, pc = 0x404C1A
+(C:\Symbian\7.0s\Series60_v20\epoc32\gcc\bin\as.exe 1000) frame 12: sp = 0x247FE10, pc = 0x10004410
+(C:\Symbian\7.0s\Series60_v20\epoc32\gcc\bin\as.exe 1000) frame 13: sp = 0x247FF58, pc = 0x10004447
+(C:\Symbian\7.0s\Series60_v20\epoc32\gcc\bin\as.exe 1000) frame 14: sp = 0x247FF68, pc = 0x461476
+(C:\Symbian\7.0s\Series60_v20\epoc32\gcc\bin\as.exe 1000) frame 15: sp = 0x247FF78, pc = 0x40103A
+(C:\Symbian\7.0s\Series60_v20\epoc32\gcc\bin\as.exe 1000) End of stack trace (more stack frames may be present)

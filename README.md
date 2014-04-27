@@ -1,4 +1,14 @@
-#Vagrant Symfony 2 Box setup
+#Vagrant Phalcon Box setup
+
+A slight modification of https://github.com/web-solution/vagrant-symfony2-box to work with phalcon
+
+* Using Mysql 5.6 version
+* added elastic search
+* added beanstalkd
+* mongodb removed
+* phalcon.ini id in the /puppet/files/phalcon.ini
+* Config params is in the /puppet/manifests/core/params.pp
+
 
 ## Requirements
 * [VirtualBox](https://www.virtualbox.org)
@@ -15,7 +25,7 @@ Clone this repository
 
 * run vagrant (for the first time it should take up to 30-60 min)
     ```$ vagrant up```
-    
+
 * Web server is accessible with http://www.symfony-box.local (Host address can be changed in Vagrantfile)
 
 * PhpMyAdmin is accessible with http://www.symfony-box.local/phpmyadmin

@@ -3,12 +3,12 @@
 
 # General project settings
 # -----------------------------
-box_name = "symfony-box"
+box_name = "precise64"
 box_memory = "512"
-projects_hosts = "symfony-box.local"
+projects_hosts = "phalcon-box.local"
 projects_hosts_aliases = [
-  "www.symfony-box.local",
-  "admin.symfony-box.local", 
+  "www.phalcon-box.local",
+  "admin.phalcon-box.local",
 ]
 ip_address = "192.168.10.10"
 
@@ -30,7 +30,7 @@ Vagrant.configure("2") do |config|
   config.ssh.forward_agent = true
 
   config.vm.provider "virtualbox" do |v|
-    v.customize ["modifyvm", :id, "--name", box_name]
+  # v.customize ["modifyvm", :id, "--name", box_name]
     v.customize ["modifyvm", :id, "--memory", box_memory]
   end
 
