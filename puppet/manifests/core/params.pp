@@ -8,12 +8,11 @@ class core::params
   $files_dir     = "$puppet_dir/files"
 
 
-  $dest_phalcon_ini = "/etc/php5/conf.d/phalcon.ini"
   $src_phalcon_ini =  "$files_dir/phalcon.ini"
 
   # Database variables
   $dbname     = "phalcon"
   $dbuser     = "vagrant"
   $dbpassword = "vagrant"
-  $dbroot_password = "vagrant"
+  $dbroot_password = "root"
 }

@@ -3,10 +3,11 @@
 A slight modification of https://github.com/web-solution/vagrant-symfony2-box to work with phalcon
 
 * Using Mysql 5.6 version
-* added elastic search
+* added elasticsearch
 * added beanstalkd
 * mongodb removed
-* phalcon.ini id in the /puppet/files/phalcon.ini
+* capifony removed
+* phalcon.ini is in the /puppet/files/phalcon.ini
 * Config params is in the /puppet/manifests/core/params.pp
 
 

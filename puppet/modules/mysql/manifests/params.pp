@@ -16,11 +16,13 @@ class mysql::params {
 
   ### Module specific parameters
   $root_password = ''
+  $password_salt = ''
 
   ### Application related parameters
 
   $package = $::operatingsystem ? {
-    default => 'mysql-server',
+    /(?i:FreeBSD)/ => 'databases/mysql56-server',
+    default        => 'mysql-server',
   }
 
   $package_client = $::operatingsystem ? {
@@ -30,6 +32,7 @@ class mysql::params {
 
   $service = $::operatingsystem ? {
     /(?i:Debian|Ubuntu|Mint)/ => 'mysql',
+    /(?i:FreeBsd)/            => 'mysql-server',
     default                   => 'mysqld',
   }
 
@@ -68,7 +71,8 @@ class mysql::params {
   }
 
   $config_file_group = $::operatingsystem ? {
-    default => 'root',
+    /(?i:Darwin|FreeBsd)/ => 'wheel',
+    default               => 'root',
   }
 
   $config_file_init = $::operatingsystem ? {
@@ -101,6 +105,7 @@ class mysql::params {
   $source_dir = ''
   $source_dir_purge = false
   $template = ''
+  $version = 'present'
   $options = ''
   $service_autorestart = true
   $absent = false

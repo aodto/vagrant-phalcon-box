@@ -29,6 +29,7 @@ class dev-packages {
         command => '/usr/bin/add-apt-repository ppa:ivanj/beanstalkd',
         require => Package["python-software-properties"],
     }
+    ->
     exec { 'add-apt-repository ppa:ondrej/mysql-5.6':
         command => '/usr/bin/add-apt-repository ppa:ondrej/mysql-5.6',
         require => Package["python-software-properties"],
@@ -142,11 +143,12 @@ class nginx-setup {
 class mysql-setup {
   include core::params
 
+
   class { "mysql":
     root_password => $core::params::dbroot_password,
     require => Exec['apt-get update 2'],
   }
-
+  ->
   mysql::grant { 'phalcon':
       mysql_privileges => 'ALL',
       mysql_password => $core::params::dbpassword,
@@ -154,7 +156,6 @@ class mysql-setup {
       mysql_host => 'localhost',
       mysql_db => $core::params::dbname,
   }
-
 }
 
 class php-setup {
@@ -289,9 +290,9 @@ class { 'apt':
 
 Exec["apt-get update"] -> Package <| |>
 
+include mysql-setup
 include system-update
 include dev-packages
-include mysql-setup
 include nginx-setup
 include php-setup
 

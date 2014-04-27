@@ -12,6 +12,11 @@
 #   If blank, no password is set
 #   If 'auto' a random password is generated
 #
+# [*password_salt*]
+#   Uses a salt with FQDN_RAND when generating the root password.
+#   If you do not use this, the password can be reverse engineered very easily.
+#   Example: $password_salt = 'smeg'
+#
 # Standard class parameters
 # Define the general class behaviour and customizations
 #
@@ -51,6 +56,12 @@
 #   Automatically restarts the mysql service when there is a change in
 #   configuration files. Default: true, Set to false if you don't want to
 #   automatically restart the service.
+#
+# [*version*]
+#   The package version, used in the ensure parameter of package type.
+#   Default: present. Can be 'latest' or a specific version number.
+#   Note that if the argument absent (see below) is set to true, the
+#   package is removed, whatever the value of version parameter.
 #
 # [*absent*]
 #   Set to 'true' to remove package(s) installed by module
@@ -207,6 +218,7 @@
 #
 class mysql (
   $root_password       = params_lookup( 'root_password' ),
+  $password_salt       = params_lookup( 'password_salt' ),
   $my_class            = params_lookup( 'my_class' ),
   $source              = params_lookup( 'source' ),
   $source_dir          = params_lookup( 'source_dir' ),
@@ -214,6 +226,7 @@ class mysql (
   $template            = params_lookup( 'template' ),
   $service_autorestart = params_lookup( 'service_autorestart' , 'global' ),
   $options             = params_lookup( 'options' ),
+  $version             = params_lookup( 'version' ),
   $absent              = params_lookup( 'absent' ),
   $disable             = params_lookup( 'disable' ),
   $disableboot         = params_lookup( 'disableboot' ),
@@ -260,7 +273,10 @@ class mysql (
   $bool_audit_only=any2bool($audit_only)
 
   ### Root password setup
-  $random_password = fqdn_rand(100000000000)
+  $random_password = $mysql::password_salt ? {
+    ''       => fqdn_rand(100000000000),
+    default  => fqdn_rand(100000000000,$mysql::password_salt),
+  }
 
   $real_root_password = $mysql::root_password ? {
     ''      => '',
@@ -271,7 +287,7 @@ class mysql (
   ### Definition of some variables used in the module
   $manage_package = $mysql::bool_absent ? {
     true  => 'absent',
-    false => 'present',
+    false => $mysql::version,
   }
 
   $manage_service_enable = $mysql::bool_disableboot ? {
@@ -300,7 +316,9 @@ class mysql (
     default => 'present',
   }
 
-  if $mysql::bool_absent == true or $mysql::bool_disable == true or $mysql::bool_disableboot == true {
+  if  $mysql::bool_absent == true or
+      $mysql::bool_disable == true or
+      $mysql::bool_disableboot == true {
     $manage_monitor = false
   } else {
     $manage_monitor = true
@@ -434,8 +452,8 @@ class mysql (
       ensure  => $mysql::manage_file,
       path    => "${settings::vardir}/debug-mysql",
       mode    => '0640',
-      owner   => 'root',
-      group   => 'root',
+      owner   => $mysql::config_file_owner,
+      group   => $mysql::config_file_group,
       content => inline_template('<%= scope.to_hash.reject { |k,v| k.to_s =~ /(uptime.*|path|timestamp|free|.*password.*|.*psk.*|.*key)/ }.to_yaml %>'),
     }
   }

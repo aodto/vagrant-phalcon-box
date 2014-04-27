@@ -5,3 +5,4 @@ public/symfony-box.local/vendor
 .idea
 precise64.box
 /vendor/
+/cphalcon/
