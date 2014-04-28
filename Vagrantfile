@@ -35,7 +35,7 @@ Vagrant.configure("2") do |config|
   end
 
   nfs_setting = RUBY_PLATFORM =~ /darwin/ || RUBY_PLATFORM =~ /linux/
-  config.vm.synced_folder "./public", "/var/www", id: "vagrant-root" , :nfs => nfs_setting
+  #config.vm.synced_folder "./public", "/var/www", id: "vagrant-root" , :nfs => nfs_setting
 
   config.vm.provision :puppet do |puppet|
       puppet.manifests_path = "puppet/manifests"
