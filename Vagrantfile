@@ -5,10 +5,9 @@
 # -----------------------------
 box_name = "precise64"
 box_memory = "512"
-projects_hosts = "phalcon-box.local"
+projects_hosts = "edaun-dev.local"
 projects_hosts_aliases = [
-  "www.phalcon-box.local",
-  "admin.phalcon-box.local",
+  "www.edaun.local",
 ]
 ip_address = "192.168.10.10"
 

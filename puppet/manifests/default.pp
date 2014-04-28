@@ -78,23 +78,39 @@ class phalconphp-setup (
 
   include core::params
 
-  $phalcon_deps = [
-    'autoconf',
-    'make',
-    'automake',
-    're2c',
-    'libpcre3', 'libpcre3-dev',
-    # 'pcre', 'pcre-devel',
-    'libssl1.0.0',
-    'libssl-dev',
-    'libcurl3',
-    'libcurl4-openssl-dev',
-    ]
-
-  package { $phalcon_deps:
-      ensure => "installed",
-      require => Exec['apt-get update'],
+  define safepackage (
+    $ensure = present) {
+    if !defined(Package[$title]) {
+      package { $title: ensure => $ensure }
+    }
   }
+  safepackage { 'gcc': }
+  ->
+  safepackage { 'git': }
+  ->
+  safepackage { 'autoconf': }
+  ->
+  safepackage { 'make': }
+  ->
+  safepackage { 'automake': }
+  ->
+  safepackage { 're2c': }
+  ->
+  safepackage { 'libpcre3': }
+  ->
+  safepackage { 'libpcre3-dev': }
+  ->
+  safepackage { 'libssl1.0.0': }
+  ->
+  safepackage { 'libssl-dev': }
+  ->
+  safepackage { 'libcurl3': }
+  ->
+  safepackage { 'libcurl4-openssl-dev': }
+  ->
+  safepackage { 'wget': }
+  ->
+  safepackage { 'php5-dev': }
   ->
   class {'phalconphp::framework':
     version => $ensure,
@@ -295,9 +311,7 @@ include dev-packages
 include nginx-setup
 
 include php-setup
-class { "phalconphp-setup" :
-  require => [Package['php5-dev']],
-}
+class { "phalconphp-setup" :}
 
 include composer
 include phpqatools
