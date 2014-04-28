@@ -293,9 +293,12 @@ include mysql-setup
 include system-update
 include dev-packages
 include nginx-setup
-include php-setup
 
-class { "phalconphp-setup" :}
+include php-setup
+class { "phalconphp-setup" :
+  require => [Package['php5-dev']],
+}
+
 include composer
 include phpqatools
 include memcached
