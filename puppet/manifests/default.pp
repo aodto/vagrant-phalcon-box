@@ -143,18 +143,17 @@ class nginx-setup {
 class mysql-setup {
   include core::params
 
-
   class { "mysql":
-    root_password => $core::params::dbroot_password,
+    root_password => "${core::params::dbroot_password}",
     require => Exec['apt-get update 2'],
   }
   ->
   mysql::grant { 'phalcon':
       mysql_privileges => 'ALL',
-      mysql_password => $core::params::dbpassword,
-      mysql_user => $core::params::dbuser,
+      mysql_password => "${core::params::dbpassword}",
+      mysql_user => "{$core::params::dbuser}",
       mysql_host => 'localhost',
-      mysql_db => $core::params::dbname,
+      mysql_db => "${core::params::dbname}",
   }
 }
 
