@@ -8,7 +8,13 @@ A slight modification of https://github.com/web-solution/vagrant-symfony2-box to
 * mongodb removed
 * capifony removed
 * phalcon.ini is in the /puppet/files/phalcon.ini
-* Config params is in the /puppet/manifests/core/params.pp
+* Config params is in the ```/puppet/manifests/core/params.pp```. Change this values spesifi to your needs.
+
+* Vagrant automatically setups database with this setup:
+
+    * Username: root
+    * Password: core::params::dbroot_password
+    * Database: core::params::dbname
 
 
 ## Requirements
@@ -22,20 +28,15 @@ A slight modification of https://github.com/web-solution/vagrant-symfony2-box to
 
 Clone this repository
 
-    ```$ git clone https://github.com/web-solution/vagrant-symfony2-box.git```
+    ```$ git clone https://github.com/jeffreycahyono/vagrant-phalcon-box.git```
 
 * run vagrant (for the first time it should take up to 30-60 min)
     ```$ vagrant up```
 
-* Web server is accessible with http://www.symfony-box.local (Host address can be changed in Vagrantfile)
+* Web server is accessible with http://www.phalcon-box.local (Host address can be changed in Vagrantfile)
 
-* PhpMyAdmin is accessible with http://www.symfony-box.local/phpmyadmin
+* PhpMyAdmin is accessible with http://www.phalcon-box.local/phpmyadmin
 
-* Vagrant automatically setups database with this setup:
-
-    * Username: root
-    * Password: root
-    * Database: symfony
 
 ## Installed components
 
@@ -58,6 +59,6 @@ Clone this repository
 * [Compass](http://compass-style.org/)
 * [Imagic](http://www.imagemagick.org/script/index.php)
 * [Capistrano](https://github.com/capistrano/capistrano)
-* [Capifony](http://capifony.org/)
+* [Capifony](http://capifony.org/) --removed--
 * [phpqatools](http://phpqatools.org/)
 * [memcached](http://memcached.org/)

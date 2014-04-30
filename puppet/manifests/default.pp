@@ -85,40 +85,41 @@ class phalconphp-setup (
     }
   }
   safepackage { 'gcc': }
-  ->
   safepackage { 'git': }
-  ->
   safepackage { 'autoconf': }
-  ->
   safepackage { 'make': }
-  ->
   safepackage { 'automake': }
-  ->
   safepackage { 're2c': }
-  ->
   safepackage { 'libpcre3': }
-  ->
   safepackage { 'libpcre3-dev': }
-  ->
   safepackage { 'libssl1.0.0': }
-  ->
   safepackage { 'libssl-dev': }
-  ->
   safepackage { 'libcurl3': }
-  ->
   safepackage { 'libcurl4-openssl-dev': }
-  ->
   safepackage { 'wget': }
-  ->
   safepackage { 'php5-dev': }
-  ->
   class {'phalconphp::framework':
     version => $ensure,
     debug=>false,
     src_phalcon_ini => $core::params::src_phalcon_ini,
-    require => Package["php5-fpm"],
+    require => [
+      Package["gcc"],
+      Package["git"],
+      Package["autoconf"],
+      Package["make"],
+      Package["automake"],
+      Package["re2c"],
+      Package["libpcre3"],
+      Package["libpcre3-dev"],
+      Package["libssl1.0.0"],
+      Package["libssl-dev"],
+      Package["libcurl3"],
+      Package["libcurl4-openssl-dev"],
+      Package["wget"],
+      Package["php5-dev"],
+      Package["php5-mysql"],
+    ]
   }
-
 }
 
 class elasticsearch-setup {
@@ -167,7 +168,7 @@ class mysql-setup {
   mysql::grant { 'phalcon':
       mysql_privileges => 'ALL',
       mysql_password => "${core::params::dbpassword}",
-      mysql_user => "{$core::params::dbuser}",
+      mysql_user => "${core::params::dbuser}",
       mysql_host => 'localhost',
       mysql_db => "${core::params::dbname}",
   }
@@ -311,7 +312,8 @@ include dev-packages
 include nginx-setup
 
 include php-setup
-class { "phalconphp-setup" :}
+class { "phalconphp-setup" :
+}
 
 include composer
 include phpqatools

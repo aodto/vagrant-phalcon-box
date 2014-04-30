@@ -14,5 +14,5 @@ class core::params
   $dbname     = "phalcon"
   $dbuser     = "vagrant"
   $dbpassword = "vagrant"
-  $dbroot_password = "root"
+  $dbroot_password = "vagrant"
 }

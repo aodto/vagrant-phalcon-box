@@ -5,10 +5,12 @@
 # -----------------------------
 box_name = "precise64"
 box_memory = "512"
-projects_hosts = "edaun-dev.local"
+projects_hosts = "edaun.local"
 projects_hosts_aliases = [
   "www.edaun.local",
+  "api.edaun.local",
 ]
+
 ip_address = "192.168.10.10"
 
 # Vagrant configuration
